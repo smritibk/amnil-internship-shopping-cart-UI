@@ -1,0 +1,115 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { register } from "../../services/authService";
+
+export default function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("customer"); // default role
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const data = await register({ name, email, password, role });
+
+      console.log(data)
+
+      //to verify otp
+
+      
+
+      // Redirect to login page
+      navigate("/login");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center text-green-600">
+          Create an Account
+        </h2>
+
+        {error && (
+          <p className="bg-red-100 text-red-700 p-2 rounded mb-4 text-center">
+            {error}
+          </p>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300"
+              required
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300"
+              required
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300"
+              required
+            />
+          </div>
+
+          {/* Role Dropdown */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Role</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300"
+              required
+            >
+              <option value="customer">Customer</option>
+              <option value="seller">Seller</option>
+            </select>
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+          >
+            Register
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-gray-600">
+          Already have an account?{" "}
+          <a href="/login" className="text-green-600 hover:underline">
+            Login
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}

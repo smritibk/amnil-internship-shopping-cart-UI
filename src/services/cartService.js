@@ -1,0 +1,21 @@
+import api from "./api";
+
+export const addToCart = async (productId, quantity) => {
+  const response = await api.post("/cart/add", { productId, quantity });
+  return response.data;
+};
+
+export const getCartItems = async () => {
+  const response = await api.get("/cart/view");
+  return response.data;
+};
+
+export const removeFromCart = async (itemId) => {
+  const response = await api.delete(`/cart/delete/${itemId}`);
+  return response.data;
+};
+
+export const updateCartItem = async (itemId, quantity) => {
+  const response = await api.put(`/cart/edit/${itemId}`, { quantity });
+  return response.data;
+};
