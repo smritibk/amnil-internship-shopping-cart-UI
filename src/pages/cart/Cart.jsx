@@ -194,9 +194,12 @@ export default function CartPage() {
               </Link>
 
               {cartItems.length > 0 && (
-                <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold transition-colors">
-                  Checkout Now
-                </button>
+                      <Link
+                        to="/order"
+                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold transition-colors"
+                      >
+                        Place Order
+                      </Link>
               )}
             </div>
           </div>

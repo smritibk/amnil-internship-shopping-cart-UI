@@ -15,4 +15,9 @@ export const logout = async () => {
   return response.data;
 };
 
+export const forgotPassword = async (email) => {
+  const response = await api.post("/user/forgetPassword", { email });
+  return response.data;
+};
+
 
