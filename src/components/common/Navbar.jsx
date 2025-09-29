@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { totalItems } = useCart();
 
   const handleLogout = async () => {
     try {
@@ -29,6 +31,7 @@ export default function Navbar() {
         </Link>
         <Link to="/cart" className="hover:text-gray-200">
           Cart
+          {totalItems}
         </Link>
         {user && (
           <button onClick={handleLogout} className="hover:text-gray-200">

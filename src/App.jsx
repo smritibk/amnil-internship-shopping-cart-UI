@@ -6,6 +6,7 @@ import Product from "./pages/product/Product";
 import Cart from "./pages/cart/Cart";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import OrderPage from "./pages/order/Order";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/products" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/order" element={<OrderPage />} />
+          <Route path="/resetPassword" element={<ResetPassword />} />
         </Routes>
       </Layout>
     </Router>

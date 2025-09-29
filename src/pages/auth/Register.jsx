@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../services/authService";
+import { register, verifyOtp } from "../../services/authService";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -8,6 +8,9 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("customer"); // default role
   const [error, setError] = useState("");
+  const [otpModal, setOtpModal] = useState(false);
+  const [otp, setOtp] = useState("");
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,16 +20,26 @@ export default function Register() {
     try {
       const data = await register({ name, email, password, role });
 
-      console.log(data)
+      console.log(data);
 
       //to verify otp
-
-      
-
-      // Redirect to login page
-      navigate("/login");
+      setOtpModal(true);
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+
+    // Handle OTP verification logic here
+    try {
+      const data = await verifyOtp(email, otp);
+      console.log(data);
+      setOtpModal(false);
+      navigate("/");
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -41,6 +54,36 @@ export default function Register() {
           <p className="bg-red-100 text-red-700 p-2 rounded mb-4 text-center">
             {error}
           </p>
+        )}
+
+        {otpModal && (
+          //generate otp modal
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+              <h3 className="text-xl font-semibold mb-4 text-center">
+                OTP Verification
+              </h3>
+              <p className="text-gray-600 mb-4 text-center">
+                Please enter the OTP sent to your email.
+              </p>
+              <form onSubmit={handleOtpSubmit} className="space-y-4">
+                <input
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  type="text"
+                  placeholder="Enter OTP"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-green-300"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+                >
+                  Verify OTP
+                </button>
+              </form>
+            </div>
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -58,7 +101,9 @@ export default function Register() {
 
           {/* Email */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -70,7 +115,9 @@ export default function Register() {
 
           {/* Password */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Password</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Password
+            </label>
             <input
               type="password"
               value={password}

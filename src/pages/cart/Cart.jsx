@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
-import { getCartItems } from "../../services/cartService";
 import { getProductById } from "../../services/productService";
 import CartItem from "./CartCard";
 import { Link } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+import { placeOrder } from "../../services/orderService";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [cartCount, setCartCount] = useState(0);
+  //   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
+  const { cartItems, setCartItems, totalItems } = useCart();
+  const navigate = useNavigate();
+
+console.log(cartItems)
 
   useEffect(() => {
     const fetchTotal = async () => {
@@ -34,33 +38,33 @@ export default function CartPage() {
     }
   }, [cartItems]);
 
-  const fetchCartItems = async () => {
-    try {
-      setLoading(true);
-      const response = await getCartItems();
-      console.log(response.cartItems);
+  //   const fetchCartItems = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const response = await getCartItems();
+  //       console.log(response.cartItems);
 
-      if (response.cartItems) {
-        const items = response.cartItems || [];
-        setCartItems(items);
+  //       if (response.cartItems) {
+  //         const items = response.cartItems || [];
+  //         setCartItems(items);
 
-        // Calculate total cart count
-        const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-        setCartCount(totalItems);
-      } else {
-        setError("Failed to load cart items");
-      }
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-      setError("Error loading cart items");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //         // Calculate total cart count
+  //         const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  //         setCartCount(totalItems);
+  //       } else {
+  //         setError("Failed to load cart items");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching cart:", error);
+  //       setError("Error loading cart items");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
+  //   useEffect(() => {
+  //     fetchCartItems();
+  //   }, []);
 
   const handleQuantityUpdate = (itemId, newQuantity) => {
     setCartItems((prevItems) =>
@@ -70,23 +74,32 @@ export default function CartPage() {
     );
 
     // Update cart count
-    const totalItems = cartItems.reduce(
-      (sum, item) => sum + (item.id === itemId ? newQuantity : item.quantity),
-      0
-    );
-    setCartCount(totalItems);
+    // const totalItems = cartItems.reduce(
+    //   (sum, item) => sum + (item.id === itemId ? newQuantity : item.quantity),
+    //   0
+    // );
+    // setCartCount(totalItems);
   };
 
   const handleItemRemove = (itemId) => {
-    const removedItem = cartItems.find((item) => item.id === itemId);
+    // const removedItem = cartItems.find((item) => item.id === itemId);
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
 
     // Update cart count
-    setCartCount((prevCount) => prevCount - (removedItem?.quantity || 0));
+    // setCartCount((prevCount) => prevCount - (removedItem?.quantity || 0));
   };
 
-
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const place = async () => {
+    try {
+      const response = await placeOrder({paymentMethod:"cod"});
+      if (response.message) {
+        // Clear cart on successful order placement
+        setCartItems([]);
+      }
+    } catch (error) {
+      console.error("Error placing order:", error);
+    }
+  };
 
   // Navigation Component integrated within CartPage
   const CartNavigation = () => (
@@ -114,9 +127,9 @@ export default function CartPage() {
                 className="text-gray-700 hover:text-blue-600 font-medium transition-colors flex items-center space-x-2"
               >
                 <span>🛒 Cart</span>
-                {cartCount > 0 && (
+                {totalItems > 0 && (
                   <span className="bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">
-                    {cartCount}
+                    {totalItems}
                   </span>
                 )}
               </Link>
@@ -148,25 +161,25 @@ export default function CartPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* <CartNavigation /> */}
-        <div className="flex items-center justify-center py-20">
-          <div className="text-center">
-            <div className="text-red-600 text-4xl mb-4">❌</div>
-            <div className="text-red-600 text-lg mb-4">{error}</div>
-            <button
-              onClick={fetchCartItems}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  //   if (error) {
+  //     return (
+  //       <div className="min-h-screen bg-gray-50">
+  //         {/* <CartNavigation /> */}
+  //         <div className="flex items-center justify-center py-20">
+  //           <div className="text-center">
+  //             <div className="text-red-600 text-4xl mb-4">❌</div>
+  //             <div className="text-red-600 text-lg mb-4">{error}</div>
+  //             <button
+  //               onClick={fetchCartItems}
+  //               className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold"
+  //             >
+  //               Try Again
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     );
+  //   }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -194,12 +207,15 @@ export default function CartPage() {
               </Link>
 
               {cartItems.length > 0 && (
-                      <Link
-                        to="/order"
-                        className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold transition-colors"
-                      >
-                        Place Order
-                      </Link>
+                <button
+                  onClick={() => {
+                    place();
+                    navigate("/order", { state: {cartItems} });
+                  }}
+                  className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 font-semibold transition-colors"
+                >
+                  Place Order
+                </button>
               )}
             </div>
           </div>
@@ -232,7 +248,7 @@ export default function CartPage() {
                     Cart Items
                   </h2>
                   <button
-                    onClick={fetchCartItems}
+                    // onClick={fetchCartItems}
                     className="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center space-x-1"
                   >
                     <span>🔄</span>

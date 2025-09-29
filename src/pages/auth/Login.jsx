@@ -8,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [resetEmail, setResetEmail] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,7 +29,7 @@ const Login = () => {
     setMessage("");
 
     try {
-      await forgotPassword(email);
+      await forgotPassword(resetEmail);
       setMessage("Password reset instructions sent to your email.");
     } catch (err) {
       setMessage("Failed to send reset instructions. Please try again.");
@@ -107,8 +108,8 @@ const Login = () => {
             <label className="block text-gray-700 font-medium mb-2">Email</label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300"
               required
             />
