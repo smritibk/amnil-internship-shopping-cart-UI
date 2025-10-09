@@ -65,11 +65,11 @@ export default function ProductCard({ product }) {
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col">
       {/* Product Image */}
-      <div className="h-48 w-full overflow-hidden rounded-xl mb-4">
+      <div className="h-100 w-full flex items-center justify-center p-2">
         <img
           src={product.image || "https://via.placeholder.com/200"}
           alt={product.title}
-          className="h-full w-full object-cover"
+          className="max-h-full rounded-xl max-w-full object-contain"
         />
       </div>
 

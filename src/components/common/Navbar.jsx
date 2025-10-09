@@ -26,13 +26,32 @@ export default function Navbar() {
 
       {/* Links */}
       <div className="flex space-x-6">
-        <Link to="/products" className="hover:text-gray-200">
-          Home
-        </Link>
-        <Link to="/cart" className="hover:text-gray-200">
-          Cart
-          {totalItems}
-        </Link>
+        {user && user.role === "customer" && (
+          <>
+            <Link to="/products" className="hover:text-gray-200">
+              Home
+            </Link>
+            <Link to="/cart" className="hover:text-gray-200">
+              Cart
+              {totalItems}
+            </Link>
+          </>
+        )}
+
+        {user && user.role === "seller" && (
+          <>
+          <Link to="/seller" className="hover:text-gray-200">
+              Home
+            </Link>
+            <Link to="/dashboard" className="hover:text-gray-200">
+              Dashboard
+            </Link>
+            <Link to="/order/status" className="hover:text-gray-200">
+              Order Status
+            </Link>
+          </>
+        )}
+
         {user && (
           <button onClick={handleLogout} className="hover:text-gray-200">
             Logout

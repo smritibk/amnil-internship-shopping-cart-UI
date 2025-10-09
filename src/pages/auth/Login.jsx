@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import {  forgotPassword } from "../../services/authService";
+import { forgotPassword } from "../../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+
 const Login = () => {
-  const {login} = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -16,8 +17,14 @@ const Login = () => {
     setMessage("");
 
     try {
-      await login({ email, password });
-      navigate("/products");
+      const data = await login({ email, password });
+      const userRole = data.user.role;
+
+      if (userRole === "customer") {
+        navigate("/products");
+      } else if (userRole === "seller") {
+        navigate("/seller");
+      }
     } catch (err) {
       setMessage("Invalid credentials. Please try again.");
       console.error(err.message);
@@ -40,11 +47,15 @@ const Login = () => {
   return (
     <div className="max-w-md mx-auto">
       <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
-      
+
       {message && (
-        <div className={`mb-4 p-3 rounded ${
-          message.includes("sent") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-        }`}>
+        <div
+          className={`mb-4 p-3 rounded ${
+            message.includes("sent")
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
           {message}
         </div>
       )}
@@ -53,7 +64,9 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Email
+            </label>
             <input
               type="email"
               value={email}
@@ -65,7 +78,9 @@ const Login = () => {
 
           {/* Password */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Password</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -97,7 +112,10 @@ const Login = () => {
           {/* Register Link */}
           <div className="text-center">
             <span className="text-gray-600">Don't have an account? </span>
-            <Link to="/register" className="text-blue-600 hover:text-blue-800 font-medium">
+            <Link
+              to="/register"
+              className="text-blue-600 hover:text-blue-800 font-medium"
+            >
               Register here
             </Link>
           </div>
@@ -105,7 +123,9 @@ const Login = () => {
       ) : (
         <form onSubmit={handleForgotPassword} className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Email
+            </label>
             <input
               type="email"
               value={resetEmail}
@@ -136,4 +156,3 @@ const Login = () => {
 };
 
 export default Login;
-

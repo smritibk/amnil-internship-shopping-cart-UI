@@ -10,7 +10,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      if (!user) {
+      if (!user || user.role !== "customer") {
         setCartItems([]);
         return;
       }
