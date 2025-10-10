@@ -27,3 +27,8 @@ export const getRevenueByProduct = async () => {
   const response = await api.get("/order/totalSales");
   return response.data;
 };
+
+export const dailyRevenueByDate = async (params = {}) => {
+  const response = await api.get("/order/dailyRevenue", {params});
+  return response.data;
+};
